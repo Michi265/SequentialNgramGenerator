@@ -84,6 +84,6 @@ public class NGramGenerator {
         }
 
         long endTime = System.nanoTime();
-        long totalTime = endTime - starTime;
+        long totalTime = (endTime - starTime)/1000000000;
         System.out.println(totalTime);
     }}
