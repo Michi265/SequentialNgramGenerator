@@ -10,25 +10,34 @@ import java.util.stream.Stream;
 public class NGramGenerator {
 
     public static void main(String[] args) {
+
         long starTime = System.nanoTime();
+
+        long counter = 1;
+        String input = args[0];
+        //System.out.println(input);
+        String output = args[1];
+        //System.out.println(output);
         try{
-            long counter = 1;
-            Stream<Path> files = Files.list(Paths.get("/home/michela/IdeaProjects/n-gramm-test/books/www.gutenberg.org/robot/")); //return the number of books
+
+            Stream<Path> files = Files.list(Paths.get(input)); //return the number of books
             //Stream<Path> files = Files.list(Paths.get("/home/michela/IdeaProjects/ParallelNGramGenerator/prova"));
             counter = files.count();
 
-            File fileOut2 = new File("/home/michela/IdeaProjects/n-gramm-test/output2");
+            File fileOut2 = new File(output+"/output2");
             FileWriter fw2 = new FileWriter(fileOut2);
             BufferedWriter bw2 = new BufferedWriter(fw2);
 
-            File fileOut3 = new File("/home/michela/IdeaProjects/n-gramm-test/output3");
+            File fileOut3 = new File(output+"/output3");
             FileWriter fw3 = new FileWriter(fileOut3);
             BufferedWriter bw3 = new BufferedWriter(fw3);
+
+
             int j=1;
             int y=1;
-
+        try{
             for(int i=1;i<=counter; i++) {
-                File file = new File("/home/michela/IdeaProjects/n-gramm-test/books/www.gutenberg.org/robot/" + i);
+                File file = new File(input + "/"+i);
                 BufferedReader br = new BufferedReader(new FileReader(file));
                 String st;
 
@@ -36,14 +45,17 @@ public class NGramGenerator {
                 ArrayList<String> ngrams3 = new ArrayList<String>();
 
                 while ((st = br.readLine()) != null) {
+                    st = st.replace(" ", "");
                     //create 2-gram
-                    for (int k = 0; k < st.length() - 2 + 1; k++) {
-                        ngrams2.add(st.substring(k, k + 2));
+                    for (int k = 0; k <= st.length() - 2; k++) {
+                        ngrams2.add(st.substring(k, k + 2).trim());
                     }
                     //create 3-gram
-                    for (int k = 0; k < st.length() - 3 + 1; k++) {
-                        ngrams3.add(st.substring(k, k + 3));
+
+                    for (int k = 0; k <= st.length() - 3; k++) {
+                        ngrams3.add(st.substring(k, k + 3).trim());
                     }
+
                 }
                 for (int k=0; k < ngrams2.size();k++){
                     bw2.write(ngrams2.get(k)+",");
@@ -65,8 +77,12 @@ public class NGramGenerator {
 
             }
         }catch (Exception e){
+            System.out.println("Elaboration error");
+        }
+        }catch (Exception e){
             System.out.println("Database initialization error");
         }
+
         long endTime = System.nanoTime();
         long totalTime = endTime - starTime;
         System.out.println(totalTime);
