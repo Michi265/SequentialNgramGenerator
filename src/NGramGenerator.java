@@ -1,11 +1,14 @@
-import java.io.*;
+import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
+
 
 public class NGramGenerator {
 
@@ -15,13 +18,13 @@ public class NGramGenerator {
 
         long counter = 1;
         String input = args[0];
-        //System.out.println(input);
+        System.out.println("Input Database location: " + input);
         String output = args[1];
-        //System.out.println(output);
-        try{
+        System.out.println("Output location: " + input);
 
-            Stream<Path> files = Files.list(Paths.get(input)); //return the number of books
-            //Stream<Path> files = Files.list(Paths.get("/home/michela/IdeaProjects/ParallelNGramGenerator/prova"));
+        try{
+            //return the number of books
+            Stream<Path> files = Files.list(Paths.get(input));
             counter = files.count();
 
             File fileOut2 = new File(output+"/output2");
@@ -33,48 +36,44 @@ public class NGramGenerator {
             BufferedWriter bw3 = new BufferedWriter(fw3);
 
 
-            int j=1;
-            int y=1;
         try{
             for(int i=1;i<=counter; i++) {
+                   
                 File file = new File(input + "/"+i);
                 BufferedReader br = new BufferedReader(new FileReader(file));
                 String st;
 
-                ArrayList<String> ngrams2 = new ArrayList<String>();
-                ArrayList<String> ngrams3 = new ArrayList<String>();
+                StringBuilder ngrams2 = new StringBuilder();
+                StringBuilder ngrams3 = new StringBuilder();
+                ngrams2.append("\n").append("File n: "+i).append("\n");
+                ngrams3.append("\n").append("File n: "+i).append("\n");
 
-                while ((st = br.readLine()) != null) {
-                    st = st.replace(" ", "");
-                    //create 2-gram
-                    for (int k = 0; k <= st.length() - 2; k++) {
-                        ngrams2.add(st.substring(k, k + 2).trim());
+ 				while ((st = br.readLine()) != null) {
+                	if(!st.isBlank()) {
+
+                     	//trasformo la stringa in una stringa senza spazi
+                        String[] words;
+                        StringBuilder line = new StringBuilder(new String(""));
+                        words = st.split("\\s+");
+                        for (String word : words) {
+                            line.append(word);
+                        }
+
+                        //crea 2-gram
+                        st = line.toString();
+                        for (int j = 0; j < st.length() - 2 + 1; j++) {
+                            ngrams2.append(st, j, j + 2).append(",");
+                        }
+                        //create 3-gram
+                        for (int j = 0; j < st.length() - 3 + 1; j++) {
+                            ngrams3.append(st, j, j + 3).append(",");
+                        }
+                        ngrams2.append("\n");
+                        ngrams3.append("\n");
                     }
-                    //create 3-gram
-
-                    for (int k = 0; k <= st.length() - 3; k++) {
-                        ngrams3.add(st.substring(k, k + 3).trim());
-                    }
-
                 }
-                for (int k=0; k < ngrams2.size();k++){
-                    bw2.write(ngrams2.get(k)+",");
-                    //bw.write(" ");
-                    if(j%60==0) {
-                        bw2.newLine();
-                    }
-                    j++;
-                    //bw.write(System.getProperty( "line.separator" ));
-                }
-                for (int k=0; k < ngrams3.size();k++){
-                    bw3.write(ngrams3.get(k)+",");
-                    //bw.write(" ");
-                    if(y%40==0) {
-                        bw3.newLine();
-                    }
-                    y++;
-                }
-
+                bw2.write(ngrams2.toString());
+                bw3.write(ngrams3.toString());
             }
         }catch (Exception e){
             System.out.println("Elaboration error");
@@ -85,5 +84,6 @@ public class NGramGenerator {
 
         long endTime = System.nanoTime();
         long totalTime = (endTime - starTime)/1000000000;
-        System.out.println(totalTime);
-    }}
+        System.out.println(totalTime + " s");
+    }
+}
