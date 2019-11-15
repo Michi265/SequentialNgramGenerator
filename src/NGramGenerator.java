@@ -49,7 +49,7 @@ public class NGramGenerator {
                 ngrams3.append("\n").append("File n: "+i).append("\n");
 
  				while ((st = br.readLine()) != null) {
-                	if(!st.isBlank()) {
+                    if(!st.isBlank()) {
 
                      	//trasformo la stringa in una stringa senza spazi
                         String[] words;
@@ -72,6 +72,7 @@ public class NGramGenerator {
                         ngrams3.append("\n");
                     }
                 }
+
                 bw2.write(ngrams2.toString());
                 bw3.write(ngrams3.toString());
             }
@@ -84,6 +85,7 @@ public class NGramGenerator {
 
         long endTime = System.nanoTime();
         long totalTime = (endTime - starTime)/1000000000;
-        System.out.println(totalTime + " s");
+
+        System.out.println("Execution time: " + totalTime + " s");
     }
 }
